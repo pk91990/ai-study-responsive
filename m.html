@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8">
+  <title>AI Study Chatbot - DSA & C Learning Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanalei+Fill&family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="nav">
+  
+  <h1 id="nav">
+    <img src="menu.png"  height="20px"   alt="">
+    
+    
+    
+  </h1>
+  <h2>
+    🤖AI Study
+
+  </h2>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+  
+</div>
+
+
+<div class="main">
+
+  <div class="sidebar">
+    <div class="bg-image"></div>
+    <div class="sidebar-contanier">
+
+      
+      <h2>Function</h2>
+      <li class="smart-planner">Ai Smart Planner</li>
+      <li class="study-sidebar">Study Chatbot</li>
+      <li class="quiz-sidebar">Quiz Generator</li>
+    </div>
+    
+  
+  </div>
+
+            <div class="content">
+              <div class="task-main">
+                <div class="task-generator">
+
+                  
+                 
+                    
+                    <div class="container">
+                      
+                      
+                      <h2>📚 AI Smart Planner</h2>
+                      
+                      <label>Subjects</label>
+                      <input type="text" id="subjects" class="text"placeholder="DSA, DBMS, OS">
+                      
+                      <label>Hours per day</label>
+                      <input type="number" id="hours" class="text"placeholder="3">
+                      
+                      <label>Exam Date</label>
+                      <input type="date" id="examDate" class="text">
+                      
+                      <button id="generateBtn">Generate Plan</button>
+                      
+                      <button id="recalcBtn" style="display:none; background:#ff9800;">Recalculate Missed Tasks</button>
+                      
+                      <div id="loader">⏳ Processing...</div>
+                      
+                      
+                  </div>
+                
+
+                    <div class="container">
+                      
+                      <h3>Your Study Plan</h3>
+                      <div class="task-container">
+                        <div id="taskList">No plan yet.</div>
+                        
+                      </div>
+        
+                    
+                  </div>
+                  
+                </div>
+              </div>
+
+              <div class="chatbot-main">
+
+  <div class="chatbot-container">
+    <div class="chatbot-header">
+      <h1>🤖 Study Chatbot</h1>
+      <p>Ask me about DSA, C, OS, and more!</p>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot">
+        <div id="chatHistory" class="history"></div>
+        
+        <div class="message-content">
+          👋 Hello! I'm your AI Study Assistant. I can help you with:
+          <div class="list-item">7-day DSA and C learning plans</div>
+          <div class="list-item">Study schedules based on your available time</div>
+          <div class="list-item">Algorithm explanations with examples</div>
+          <div class="list-item">MCQs from various subjects</div>
+          <p style="margin-top: 10px; font-size: 12px; opacity: 0.8;">Try asking me any of the quick prompts below!</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="input-area">
+      <input 
+      type="text" 
+      id="userInput" 
+      placeholder="Ask me anything..." 
+      autocomplete="off"
+      >
+      <button class="chatbot-btn" onclick="sendMessage()">Send</button>
+    </div>
+    
+    <div class="quick-prompts" style="padding: 0 15px 15px;">
+      <button class="quick-btn" onclick="quickPrompt('Make a 7-day plan for DSA and C in parallel')">📅 7-Day DSA & C Plan</button>
+      <button class="quick-btn" onclick="quickPrompt('I have 3 hours today, what should I do?')">⏰ 3-Hour Study Plan</button>
+      <button class="quick-btn" onclick="quickPrompt('Explain bubble sort in simple language')">🔤 Bubble Sort Explained</button>
+      <button class="quick-btn" onclick="quickPrompt('Give 10 MCQs from OS – process scheduling')">❓ OS MCQs</button>
+    </div>
+  </div>
+</div>
+
+
+                <div class="quiz-container" style="display:none; width: 100%; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow-y: auto; max-height: 90vh;">
+                  <div class="header-row">
+                    <div>
+                      <h1>AI Question & Quiz Generator</h1>
+                      <div class="subtitle">Generate questions with Gemini, take the quiz, and track your weak topics.</div>
+                    </div>
+                  </div>
+
+                  <!-- Quiz Config Form -->
+                  <div class="config">
+                    <div class="grid">
+                      <div>
+                        <label for="subject">Subject</label>
+                        <input id="subject" type="text" placeholder="e.g. Physics, C Programming" />
+                      </div>
+                      <div>
+                        <label for="topic">Topic</label>
+                        <input id="topic" type="text" placeholder="e.g. Pointers, Newton's Laws" />
+                      </div>
+                      <div>
+                        <label for="difficulty">Difficulty</label>
+                        <select id="difficulty">
+                          <option value="easy">Easy</option>
+                          <option value="medium" selected>Medium</option>
+                          <option value="hard">Hard</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label for="numQuestions">Number of Questions</label>
+                        <input id="numQuestions" type="number" min="1" max="15" value="5" />
+                      </div>
+                    </div>
+
+                    <div class="grid">
+                      <div>
+                        <label for="format">Question Type</label>
+                        <select id="format">
+                          <option value="mcq">MCQ only</option>
+                          <option value="short">Short answer only</option>
+                          <option value="mixed" selected>Mixed (MCQ + Short)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <button class="btn-primary" id="generateBtn-quiz">🚀 Generate Quiz with Gemini</button>
+                    <button class="btn-secondary" id="loadWeakBtn" type="button">🧠 Use Weak Topics Only</button>
+                    
+                    <div class="status" id="status"></div>
+                  </div>
+
+                  <hr />
+
+                  <!-- Quiz Section -->
+                  <div>
+                    <div class="section-title">Your Quiz</div>
+                    <div id="quizContainer" class="quiz-container-inner"></div>
+                    <button class="btn-primary" id="submitBtn" style="display:none;">✅ Submit Quiz</button>
+                    <div id="results" class="results" style="display:none;"></div>
+                  </div>
+
+                  <!-- Weak Topics Section -->
+                  <hr />
+                  <div>
+                    <div class="section-title">Saved Weak Topics</div>
+                    <div id="weakTopicsDisplay" class="weak-topics"></div>
+                  </div>
+                </div>
+
+            
+
+
+
+
+
+
+
+
+
+                
+              </div>
+            </div>
+            <div class="mobile-bottom-nav">
+              <a href="#" id ="mob-planner" class="nav-btn active">
+                <span class="icon">📅</span>
+                <span class="label">Planner</span>
+              </a>
+            
+              <a href="#"id="mob-study" class="nav-btn">
+                <span class="icon">🤖</span>
+                <span class="label">Bot</span>
+              </a>
+            
+              <a href="#" id="mob-quize" class="nav-btn">
+                <span class="icon">📝</span>
+                <span class="label">Quiz</span>
+              </a>
+            </div>
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"></script>
+
+<script>hljs.highlightAll();</script>
+
+  <!-- Generate Floating Particles -->
+  
+
+</body>
+</html>
