@@ -9,6 +9,18 @@ const API_KEY =  localStorage.getItem("GEMINI_API_KEY");
       localStorage.removeItem("GEMINI_API_KEY");
       window.location.href = "index.html";
     }
+
+
+    // 🔥 Save study plan to Netlify DB
+fetch("/.netlify/functions/saveStudyPlan", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    userId: USER_ID,
+    plan: studyPlan
+  })
+}).catch(err => console.error("DB save failed", err));
+
 const chatMessages = document.getElementById("chatMessages");
 const userInput = document.getElementById("userInput");
 const taskList = document.getElementById("taskList");
@@ -113,6 +125,36 @@ quiz.addEventListener('click', () => {
 });
 
 
+////////
+let longTermMemory = JSON.parse(localStorage.getItem("ltm")) || {};
+
+
+////
+function updateLongTermMemory(message) {
+  const text = message.toLowerCase();
+
+  if (text.includes("my name is")) {
+    longTermMemory.name = message.split("my name is")[1].trim();
+  }
+
+  if (text.includes("remember")) {
+    const info = message.split("remember")[1].trim();
+    longTermMemory.notes = longTermMemory.notes || [];
+    longTermMemory.notes.push(info);
+  }
+
+  if (text.includes("my exam is on")) {
+    longTermMemory.examDate = message.split("my exam is on")[1].trim();
+  }
+
+  if (text.includes("i am weak in")) {
+    longTermMemory.weakAreas = longTermMemory.weakAreas || [];
+    longTermMemory.weakAreas.push(message.split("i am weak in")[1].trim());
+  }
+
+  // Save to localStorage
+  localStorage.setItem("ltm", JSON.stringify(longTermMemory));
+}
 
 
 
@@ -122,6 +164,51 @@ userInput.addEventListener("keypress", (e) => {
     sendMessage();
   }
 });
+
+
+////
+async function sendToGemini(message) {
+  
+  // Update long-term memory
+  updateLongTermMemory(message);
+
+  // Save chat history
+  memory.push({ role: "user", content: message });
+
+  const prompt = `
+You are an AI assistant with long-term personalized memory.
+
+User Profile (long-term memory):
+${JSON.stringify(longTermMemory, null, 2)}
+
+Conversation History:
+${memory.map(m => m.role.toUpperCase() + ": " + m.content).join("\n")}
+
+Latest User Message:
+${message}
+
+Reply naturally using user memory when relevant.
+  `;
+
+  const response = await geminiRequest(prompt);
+
+  addMessage(response, "bot");
+  memory.push({ role: "assistant", content: response });
+
+  // Save last used memory again
+  localStorage.setItem("ltm", JSON.stringify(longTermMemory));
+}
+
+
+
+
+
+
+
+//////
+
+
+
 
 async function sendMessage() {
   const message = userInput.value.trim();
@@ -374,20 +461,27 @@ async function recalcPlan() {
     showLoader(false);
     return;
   }
-
   const prompt = `
-You are a Study Schedule Repair AI.
+You are an advanced AI Smart Study Rescheduler.
 
-Missed Tasks: ${missed.join(", ")}
+Missed tasks:
+${missed.join(", ")}
 
 Rules:
-- Reassign them later, closer to exam.
-- Mark repeated tasks with "risk": true.
-- Status must become pending.
-- Output JSON only.
+- Move missed tasks to later dates.
+- Increase workload closer to the exam.
+- Mark tasks repeated twice or more with: "risk": true
+- Status must always reset to "pending".
+- Output ONLY pure JSON array. No commentary.
+
+Format:
+[
+  { "day": "Day X", "task": "____", "status": "pending", "risk": false }
+]
 `;
 
   const result = await geminiRequestP(prompt);
+  
 
   try {
     studyPlan = JSON.parse(result);

@@ -1,0 +1,26 @@
+{
+  "name": "ai-study-responsive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pk91990/ai-study-responsive.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pk91990/ai-study-responsive/issues"
+  },
+  "homepage": "https://github.com/pk91990/ai-study-responsive#readme",
+  "dependencies": {
+    "@netlify/neon": "^0.1.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^23.12.3"
+  }
+}
