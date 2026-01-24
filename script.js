@@ -9,18 +9,6 @@ const API_KEY =  localStorage.getItem("GEMINI_API_KEY");
       localStorage.removeItem("GEMINI_API_KEY");
       window.location.href = "index.html";
     }
-
-
-    // 🔥 Save study plan to Netlify DB
-fetch("/.netlify/functions/saveStudyPlan", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    userId: USER_ID,
-    plan: studyPlan
-  })
-}).catch(err => console.error("DB save failed", err));
-
 const chatMessages = document.getElementById("chatMessages");
 const userInput = document.getElementById("userInput");
 const taskList = document.getElementById("taskList");
